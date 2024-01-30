@@ -1,0 +1,11 @@
+{
+  "tasks": {
+    "dev": "deno run -A src/index.ts"
+  },
+  "imports": {
+    "hono": "https://deno.land/x/hono@v3.10.1/mod.ts",
+    "hono/middleware": "https://deno.land/x/hono@v3.10.1/middleware.ts",
+    "hono/cookie": "https://deno.land/x/hono@v3.10.1/helper/cookie/index.ts"
+  },
+  "importMap": "./vendor/import_map.json"
+}

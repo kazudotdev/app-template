@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "@db",
+  "version": "1.0.0",
+  "scripts": {
+    "generate": "drizzle-kit generate:sqlite"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "drizzle-kit": "0.20.13"
+  },
+  "dependencies": {
+    "@libsql/client": "0.4.2",
+    "drizzle-orm": "0.29.3"
+  }
+}

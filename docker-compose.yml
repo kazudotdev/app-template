@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  sqld-primary:
+    build:
+      context: .
+      dockerfile: ./apps/server/libsql/Dockerfile
+    platform: linux/amd64
+    environment:
+      - SQLD_NODE=primary
+      - SQLD_HTTP_LISTEN_ADDR=0.0.0.0:8000
+    ports:
+      - 8000:8000
