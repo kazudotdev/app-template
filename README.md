@@ -1,5 +1,11 @@
 # fullstack application template
 
+## Dependencies
+
+- Docker / Docker compose
+- pnpm / Node.js
+- Deno
+
 ## How to add sub packages
 
 ```
