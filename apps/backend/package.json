@@ -1,0 +1,17 @@
+{
+  "name": "@backend",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "workspaces": ["../../packages/*"],
+  "dependencies": {
+    "hono": "^3.12.9",
+    "@db": "workspace:*'"
+  }
+}

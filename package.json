@@ -3,7 +3,8 @@
   "name": "app-template",
   "version": "1.0.0",
   "scripts": {
-    "db": "pnpm -F \"@db\""
+    "db": "pnpm -F \"@db\"",
+    "backend": "pnpm -F \"@backend\""
   },
   "engines": {
     "pnpm": ">=8.10.0",
