@@ -2,16 +2,21 @@
   "private": true,
   "name": "app-template",
   "version": "1.0.0",
+
   "scripts": {
-    "db": "pnpm -F \"@db\"",
-    "backend": "pnpm -F \"@backend\""
+    "db": "bun run --cwd packages/db",
+    "mobile": "bun run --cwd apps/mobile",
+    "backend": "bun run --cwd apps/backend"
   },
   "engines": {
-    "pnpm": ">=8.10.0",
-    "npm": "please_use_pnpm_instead"
+    "pnpm": "please_use_bun_instead",
+    "npm": "please_use_bun_instead"
   },
-  "keywords": [],
-  "author": "",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "packageManager": "bun",
   "license": "ISC",
   "devDependencies": {
     "typescript": "^5.3.3"
