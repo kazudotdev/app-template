@@ -3,7 +3,8 @@
   "name": "@db",
   "version": "1.0.0",
   "scripts": {
-    "generate": "drizzle-kit generate:sqlite"
+    "generate": "bunx drizzle-kit generate:sqlite",
+    "migrate": "bun run migration.ts"
   },
   "license": "ISC",
   "devDependencies": {
@@ -11,6 +12,7 @@
   },
   "dependencies": {
     "@libsql/client": "0.4.2",
+    "@paralleldrive/cuid2": "^2.2.2",
     "drizzle-orm": "0.29.3"
   }
 }

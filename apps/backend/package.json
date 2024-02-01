@@ -9,7 +9,6 @@
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
-  "workspaces": ["../../packages/*"],
   "dependencies": {
     "hono": "^3.12.9",
     "@db": "workspace:*'"

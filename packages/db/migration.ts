@@ -1,6 +1,8 @@
 import db from "./";
 import { migrate } from "drizzle-orm/libsql/migrator";
 
-export default async function migration() {
+function migration() {
   return migrate(db, { migrationsFolder: "./migrations" });
 }
+
+await migration();

@@ -5,6 +5,7 @@
 
   "scripts": {
     "db": "bun run --cwd packages/db",
+    "migrate": "bun db migrate",
     "mobile": "bun run --cwd apps/mobile",
     "backend": "bun run --cwd apps/backend"
   },
