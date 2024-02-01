@@ -3,28 +3,27 @@
 ## Dependencies
 
 - Docker / Docker compose
-- pnpm / Node.js
-- Deno
+- Bun / (Node.js)
 
 ## How to add sub packages
 
 ```
-# package.json on root dir
-
-  "scripts": {
-    "db": "pnpm -F \"@db\""
-  },
-
+mkdir packages/xx
+cd packages/xx
+bun init
+bun add yyy
 ```
 
 ## How to run script in sub packages
 
 ```
-pnpm db <command>
+bun run <pkg> <command>
+
+## bun run db generate
 ```
 
 ## How to install packages
 
 ```
-pnpm db add -E drizzle-kit
+bun --cwd packages/xxx add <pkg>
 ```
