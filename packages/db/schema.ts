@@ -10,6 +10,7 @@ export const notes = sqliteTable("notes", {
   title: text("title"),
   content: text("content"),
   created_at: text("timestamp").default(sql`CURRENT_TIMESTAMP`),
+  owner: text("owner").default("user"),
   public: integer("private", { mode: "boolean" }).default(false),
 });
 

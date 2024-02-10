@@ -1,0 +1,1 @@
+ALTER TABLE notes ADD `owner` text DEFAULT 'user';

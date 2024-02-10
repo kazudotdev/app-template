@@ -9,6 +9,13 @@ var _journal_default = {
       when: 1707555638311,
       tag: "0000_icy_sue_storm",
       breakpoints: true
+    },
+    {
+      idx: 1,
+      version: "5",
+      when: 1707580315872,
+      tag: "0001_chunky_polaris",
+      breakpoints: true
     }
   ]
 };
@@ -23,11 +30,15 @@ var _0000_icy_sue_storm_default = `CREATE TABLE \`notes\` (
 );
 `;
 
+// drizzle/0001_chunky_polaris.sql
+var _0001_chunky_polaris_default = `ALTER TABLE notes ADD \`owner\` text DEFAULT 'user';`;
+
 // drizzle/migrations.js
 var migrations_default = {
   journal: _journal_default,
   migrations: {
-    m0000: _0000_icy_sue_storm_default
+    m0000: _0000_icy_sue_storm_default,
+    m0001: _0001_chunky_polaris_default
   }
 };
 export {
