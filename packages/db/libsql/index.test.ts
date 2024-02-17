@@ -3,7 +3,8 @@ import { createDatabase, migrate } from "./index";
 import { notes } from "../schema";
 import { sql } from "drizzle-orm";
 
-const db = createDatabase(":memory:");
+//const db = createDatabase("http://localhost:8000/dev/testdb/");
+const db = createDatabase("http://localhost:3000/user/db/testdb/");
 
 test("migration test", async () => {
   await migrate(db);
@@ -12,7 +13,7 @@ test("migration test", async () => {
 
   await db.insert(notes).values({ title: "test", content: "hogehoge" });
   const _notes = await db.select().from(notes);
-  expect(_notes.length).toBe(1);
+  expect(_notes.length).toBeGreaterThan(0);
   expect(_notes[0].title).toBe("test");
   expect(_notes[0].content).toBe("hogehoge");
 });
