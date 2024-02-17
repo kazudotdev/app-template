@@ -8,6 +8,8 @@ services:
     platform: linux/amd64
     environment:
       - SQLD_NODE=primary
+      - SQLD_ADMIN_LISTEN_ADDR=0.0.0.0:8033
       - SQLD_HTTP_LISTEN_ADDR=0.0.0.0:8000
     ports:
+      - 8033:8033 # admin api
       - 8000:8000
