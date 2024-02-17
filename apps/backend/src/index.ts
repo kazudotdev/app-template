@@ -8,6 +8,22 @@ app.get("/", async (c) => {
   return c.json({ hello: "world" });
 });
 
+app.post("/user/db/v1/namespaces/:namespace/create", async (c) => {
+  const { namespace } = c.req.param();
+  const url = new URL(
+    `http://localhost:8033/v1/namespaces/${namespace}/create`,
+  );
+  const req = new Request(url, {
+    headers: c.req.raw.headers,
+    method: c.req.raw.method,
+    mode: c.req.raw.mode,
+    body: "{}",
+  });
+  req.headers.set("host", url.host);
+  req.headers.set("content-type", "application/json");
+  return fetch(url, req).catch((e) => c.json({ error: e }));
+});
+
 app.all("/user/db/:namespace/*", async (c) => {
   const { namespace } = c.req.param();
   const path = c.req.path.split(`/user/db/${namespace}/`)[1] ?? "";
