@@ -1,30 +1,27 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
-import db from "@db";
-import { notes, type NewNotes } from "@db/schema";
 const app = new Hono();
 
 app.use("*", logger());
 
 app.get("/", async (c) => {
-  const n = await db.select().from(notes);
-  return c.json({ note: n });
+  return c.json({ hello: "world" });
 });
 
-app.post("/notes", async (c) => {
-  const { title, content } = await c.req.json<{
-    title: string;
-    content: string;
-  }>();
+app.all("/user/db/:namespace/*", async (c) => {
+  const { namespace } = c.req.param();
+  const path = c.req.path.split(`/user/db/${namespace}/`)[1] ?? "";
 
-  console.log({ title, content });
-  const value: NewNotes = {
-    title: title,
-    content: content,
-  };
-  await db.insert(notes).values(value);
-
-  return c.json({ status: "ok" });
+  const req = c.req.raw.clone();
+  const body = JSON.stringify(await c.req.json());
+  req.headers.set("host", `${namespace}.localhost:8000/${path}`);
+  req.headers.set("Accept-Encoding", "identity"); //workaround: https://github.com/oven-sh/bun/issues/686#issuecomment-1301468824
+  return fetch(`http://localhost:8000/${path}`, {
+    method: req.method,
+    mode: req.mode,
+    body,
+    headers: req.headers,
+  });
 });
 
 export default app;
