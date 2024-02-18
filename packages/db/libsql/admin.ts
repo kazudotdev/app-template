@@ -17,7 +17,10 @@ export default class AdminClient {
   }
 
   async deleteNamespace(name: string) {
-    name;
-    throw new Error("not supported");
+    const endpoint = `${this.url}/v1/namespaces/${name}`;
+    const res = await fetch(endpoint, {
+      method: "DELETE",
+    });
+    return res.ok;
   }
 }
