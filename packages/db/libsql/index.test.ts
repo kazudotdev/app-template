@@ -4,7 +4,7 @@ import { notes } from "../schema";
 import { sql } from "drizzle-orm";
 
 //const db = createDatabase("http://localhost:8000/dev/testdb/");
-const db = createDatabase("http://localhost:3000/user/db/testdb/");
+const db = createDatabase("http://localhost:3000/db/testdb/");
 
 test("migration test", async () => {
   await migrate(db);
