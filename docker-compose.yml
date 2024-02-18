@@ -4,7 +4,7 @@ services:
   sqld-primary:
     build:
       context: .
-      dockerfile: ./apps/server/libsql/Dockerfile
+      dockerfile: ./apps/backend/libsql/Dockerfile
     platform: linux/amd64
     environment:
       - SQLD_NODE=primary

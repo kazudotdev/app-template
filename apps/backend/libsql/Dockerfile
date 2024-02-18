@@ -1,4 +1,4 @@
-FROM --platform=$TARGETPLATFORM ghcr.io/tursodatabase/libsql-server:latest
+FROM --platform=$TARGETPLATFORM ghcr.io/tursodatabase/libsql-server:v0.22.22
 
 ARG TARGETPLATFORM
 
