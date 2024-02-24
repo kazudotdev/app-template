@@ -13,3 +13,52 @@ services:
     ports:
       - 8033:8033 # admin api
       - 8000:8000
+
+  postgresd:
+    image: postgres:12-alpine
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=passwordpostgres
+      - POSTGRES_DB=passkey
+    healthcheck:
+      test: pg_isready -U postgres -d passkey
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  passkey-migrate:
+    image: ghcr.io/teamhanko/hanko:v0.10.0
+    volumes:
+      - type: bind
+        source: ./apps/backend/hanko/config.yml
+        target: /etc/config/config.yml
+    command: --config /etc/config/config.yml migrate up
+    restart: on-failure
+    depends_on:
+      postgresd:
+        condition: service_healthy
+  passkey:
+    image: ghcr.io/teamhanko/hanko:v0.10.0
+    depends_on:
+      passkey-migrate:
+        condition: service_completed_successfully
+    ports:
+      - 8001:8000
+      - 8034:8001 # admin api
+    volumes:
+      - type: bind
+        source: ./apps/backend/hanko/config.yml
+        target: /etc/config/config.yml
+    command: serve --config /etc/config/config.yml all
+    environment:
+      - PASSWORD_ENABLED
+
+  mail:
+    image: axllent/mailpit:latest
+    ports:
+      - 8025:8025 # Web UI
+      - 1025:1025 # SMTP
+

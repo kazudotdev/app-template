@@ -1,0 +1,31 @@
+database:
+  database: passkey
+  dialect: postgres
+  host: postgresd
+  port: 5432
+  user: postgres
+  password: passwordpostgres
+smtp:
+  host: "mail"
+  port: "1025"
+passcode:
+  email:
+    from_address: no-reply@kazu.dev
+secrets:
+  keys:
+    - secret_keys_does_not_publish
+service:
+  name: Hanko Authenitcation Service
+webauthn:
+  relying_party:
+    origins:
+      - http://localhost:3000 # backend
+session:
+  cookie:
+    secure: false # is needed for safari, because safari does not store secure cookies on localhost
+server:
+  public:
+    cors:
+      allow_origins:
+        - http://localhost:3000
+
