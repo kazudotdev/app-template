@@ -1,3 +1,4 @@
+## https://github.com/teamhanko/hanko/blob/main/backend/docs/Config.md
 database:
   database: passkey
   dialect: postgres
@@ -23,6 +24,7 @@ webauthn:
 session:
   cookie:
     secure: false # is needed for safari, because safari does not store secure cookies on localhost
+  enable_auth_token_header: true
 server:
   public:
     cors:

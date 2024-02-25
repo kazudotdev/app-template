@@ -1,6 +1,6 @@
 import { Hono, type Context } from "hono";
 import { env } from "hono/adapter";
-const app = new Hono();
+const app = new Hono().basePath("/passkeys");
 
 const apiUrl = (c: Context) => {
   const { PASSKEYS_URL } = env<{ PASSKEYS_URL?: string }>(c);
@@ -23,7 +23,7 @@ app.get("/.well-known/jwks.json", async (c) => {
 });
 
 app.all("/*", async (c) => {
-  const url = new URL(apiUrl(c) + c.req.path);
+  const url = new URL(apiUrl(c) + c.req.path.split("/passkeys")[1]);
   const body =
     c.req.raw.body == null ? undefined : JSON.stringify(await c.req.json());
   const req = new Request(url, {
