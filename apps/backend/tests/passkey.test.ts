@@ -1,31 +1,5 @@
 import { describe, expect, test } from "bun:test";
-
-const mailClient = (endpoint: string, request: FetchRequestInit) =>
-  fetch("http://localhost:8025" + endpoint, request);
-
-const deleteAllMails = async () => {
-  await mailClient("/api/v1/messages", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({}),
-  });
-};
-
-const getPasscodeFromMail = async () => {
-  return await mailClient("/api/v1/message/latest", {
-    method: "GET",
-  })
-    .then((r: Response) => r.json())
-    .then((d) => {
-      const data = d as { Subject: string };
-      if (data) {
-        const code = data.Subject.match(/[0-9]+/);
-        if (!code) return null;
-        return code[0];
-      }
-      return null;
-    });
-};
+import { getPasscodeFromMail, deleteAllMails } from "./utils";
 
 const deleteAllUsers = async () => {
   // admin api :8034

@@ -32,6 +32,14 @@ admin.on(
   },
 );
 
+const $post = async <T>(url: string, { token, body }: ApiRequestParams) => {
+  return http<T>("POST", url, { token, body });
+};
+
+const $delete = async <T>(url: string, { token, body }: ApiRequestParams) => {
+  return http<T>("DELETE", url, { token, body });
+};
+
 user.on(["POST"], "/:namespace/*", async (c) => {
   const { namespace } = c.req.param();
   c.req.path;
