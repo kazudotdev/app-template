@@ -1,4 +1,4 @@
-import { Hono, type Context } from "hono";
+import { type Context } from "hono";
 import { env } from "./env";
 import { http } from "./http";
 import type { PasscodeLoginResult } from "./type";

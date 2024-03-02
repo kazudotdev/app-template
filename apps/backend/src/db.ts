@@ -1,10 +1,14 @@
-import { Hono } from "hono";
-
+import { Hono, type Context } from "hono";
+import { env } from "./env";
+import { http } from "./http";
+import { getToken } from "./utils";
 const user = new Hono();
 const admin = new Hono();
 
-const adminURL = process.env.DB_ADMIN_API ?? "http://localhost:8033";
-const userURL = process.env.DB_USER_API ?? "http://localhost:8000";
+const createNamespace = (c: Context, { userId }: { userId: string }) => {
+  const token = getToken(c);
+  return http.post(`/v1/namespace/${userId}/create`, { body: {} });
+};
 
 admin.on(
   ["POST", "DELETE"],
@@ -15,10 +19,9 @@ admin.on(
       throw new Error("no supported");
     }
     const url = new URL(
-      `${adminURL}/v1/namespaces/${namespace}/${operation ?? ""}`.replace(
-        /(.+)\/$/,
-        "$1",
-      ),
+      `${env(c).LIBSQL_ADMIN_URL}/v1/namespaces/${namespace}/${
+        operation ?? ""
+      }`.replace(/(.+)\/$/, "$1"),
     );
     const req = new Request(url, {
       headers: c.req.raw.headers,
@@ -32,21 +35,13 @@ admin.on(
   },
 );
 
-const $post = async <T>(url: string, { token, body }: ApiRequestParams) => {
-  return http<T>("POST", url, { token, body });
-};
-
-const $delete = async <T>(url: string, { token, body }: ApiRequestParams) => {
-  return http<T>("DELETE", url, { token, body });
-};
-
 user.on(["POST"], "/:namespace/*", async (c) => {
   const { namespace } = c.req.param();
   c.req.path;
   const path = c.req.path.split(`/${namespace}/`)[1] ?? "";
   const body = JSON.stringify(await c.req.json());
 
-  const url = new URL(userURL + "/" + path);
+  const url = new URL(env(c).LIBSQL_URL + "/" + path);
   const req = new Request(url, {
     headers: c.req.raw.headers,
     method: c.req.raw.method,

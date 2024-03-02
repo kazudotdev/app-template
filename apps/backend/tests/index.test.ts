@@ -40,7 +40,7 @@ test("create test user", async () => {
   expect(verified).not.toBeUndefined();
 
   if (!verified) throw new Error("verify email error");
-  console.log({ token: verified.token });
+
   const deleted = await testClient(appUser)
     .delete.$delete(
       {
