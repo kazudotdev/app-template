@@ -1,4 +1,6 @@
-
+## https://github.com/teamhanko/hanko/blob/main/backend/docs/Config.md
+account:
+  allow_deletion: true
 database:
   database: passkey
   dialect: postgres

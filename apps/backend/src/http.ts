@@ -23,6 +23,7 @@ const fetcher = async <T>(
             message: r.statusText,
           },
         };
+        console.error("Error in fetcher: " + r.statusText);
         return err;
       }
       const ok: ApiSuccessResponse<T> = {
@@ -45,6 +46,7 @@ class Http {
       header.set("Content-Type", "application/json");
       return header;
     })(headers);
+
     return fetcher<T>(url, {
       method,
       headers: h,

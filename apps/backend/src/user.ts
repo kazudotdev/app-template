@@ -54,9 +54,10 @@ export const findUserByEmail = async (
   });
 };
 
-export const deleteUser = async (c: Context, { email }: { email: string }) => {
+export const deleteUser = async (c: Context) => {
   return http.delete<UserDeleteResult>(env(c).PASSKEYS_URL + "/user", {
-    body: { email },
+    //@ts-ignore
+    headers: c.req.raw.headers,
   });
 };
 
@@ -71,6 +72,8 @@ const appUser = new Hono()
     const { id, code } = await c.req.json<{ id: string; code: string }>();
     return c.json(await verifyUser(c, { id, code }));
   })
-  .delete("/delete", async (c) => {});
+  .delete("/delete", async (c) => {
+    return c.json(await deleteUser(c));
+  });
 
 export default appUser;
