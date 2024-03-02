@@ -16,7 +16,7 @@ type ApiSuccessResponse<T> = {
 };
 
 type ApiRequestParams = Partial<{
-  token: string;
+  headers: Headers;
   body: Record<string, unknown>;
 }>;
 
@@ -32,7 +32,7 @@ type UserCreateResult = {
   user_id: string;
 };
 
-type UserDeleteResult = {}
+type UserDeleteResult = {};
 
 type PasscodeLoginResult = {
   created_at: string;

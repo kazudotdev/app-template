@@ -11,7 +11,7 @@ app.get("/", async (c) => {
 });
 
 app.route("/db", admin);
-app.route("/db", user);
+app.route("/user", user);
 app.route("/", passkeys);
 
 export default app;

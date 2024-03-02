@@ -38,25 +38,27 @@ class Http {
   _http<T>(
     method: ApiMethod,
     url: string,
-    { token, body }: ApiRequestParams,
+    { body, headers }: ApiRequestParams,
   ): Promise<ApiResponse<T>> {
-    const headers = new Headers();
-    headers.set("Content-Type", "application/json");
-    token && headers.set("Authorization", `Bearer ${token}`);
+    const h = ((h?: Headers) => {
+      const header = h || new Headers();
+      header.set("Content-Type", "application/json");
+      return header;
+    })(headers);
     return fetcher<T>(url, {
       method,
-      headers,
+      headers: h,
       body: JSON.stringify(body),
     });
   }
-  async post<T>(url: string, { token, body }: ApiRequestParams) {
-    return this._http<T>("POST", url, { token, body });
+  async post<T>(url: string, request: ApiRequestParams) {
+    return this._http<T>("POST", url, request);
   }
-  async delete<T>(url: string, { token, body }: ApiRequestParams) {
-    return this._http<T>("DELETE", url, { token, body });
+  async delete<T>(url: string, request: ApiRequestParams) {
+    return this._http<T>("DELETE", url, request);
   }
 }
 
-const http = new Http()
+const http = new Http();
 
 export { http };

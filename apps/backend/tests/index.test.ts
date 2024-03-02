@@ -10,6 +10,7 @@ test("create test user", async () => {
     })
     .then((r) => r.json())
     .then((r) => {
+      console.log({r})
       expect(r.ok).toBe(true);
       expect(r).toHaveProperty("body.id");
       return r.ok ? r.body.id : undefined;

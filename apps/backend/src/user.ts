@@ -1,6 +1,7 @@
 import { Hono, type Context } from "hono";
 import { env } from "./env";
 import { http } from "./http";
+import { verifyTokenMiddleware } from "./middleware";
 import type {
   UserFindByEmailResult,
   UserCreateResult,
@@ -53,16 +54,15 @@ export const findUserByEmail = async (
   });
 };
 
-export const deleteUser = async (
-  c: Context,
-  { email, token }: { email: string; token: string },
-) => {
+export const deleteUser = async (c: Context, { email }: { email: string }) => {
   return http.delete<UserDeleteResult>(env(c).PASSKEYS_URL + "/user", {
-    body: { email, token },
+    body: { email },
   });
 };
 
+// Endpoint
 const appUser = new Hono()
+  .use("/delete", verifyTokenMiddleware)
   .post("/create", async (c) => {
     const { email } = await c.req.json<{ email: string }>();
     return c.json(await createUser(c, { email }));
@@ -70,6 +70,7 @@ const appUser = new Hono()
   .post("/verify", async (c) => {
     const { id, code } = await c.req.json<{ id: string; code: string }>();
     return c.json(await verifyUser(c, { id, code }));
-  });
+  })
+  .delete("/delete", async (c) => {});
 
 export default appUser;
