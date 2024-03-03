@@ -9,7 +9,9 @@ import type {
   UserCreateResult,
   PasscodeLoginResult,
   UserDeleteResult,
+  ApiErrorResponse,
 } from "./type";
+import { which } from "bun";
 
 export const createUser = async (c: Context, { email }: { email: string }) => {
   return http
@@ -70,13 +72,16 @@ const user = new Hono()
     "/create",
     validator("json", (value: { email: string }, c) => {
       if (!value["email"] || typeof value["email"] !== "string")
-        return c.json({
-          ok: false,
-          body: {
-            code: 401,
-            message: "Invalid request body",
+        return c.json(
+          {
+            ok: false,
+            body: {
+              code: 401,
+              message: "Invalid request body",
+            },
           },
-        });
+          401,
+        );
       return value;
     }),
     async (c) => {
@@ -84,45 +89,80 @@ const user = new Hono()
       return c.json(await createUser(c, { email }));
     },
   )
-  .post("/verify", async (c) => {
-    const { id, code } = await c.req.json<{ id: string; code: string }>();
-    const res = await verifyUser(c, { id, code }).then(async (r) => {
-      if (r.ok) {
-        c.req.raw.headers.set("Authorization", `Bearer ${r.token}`);
-        const created = await createNamespace(c);
-        if (created.ok) {
-          return r;
-        }
-      }
-      return {
-        ok: false,
-        body: {
-          code: 500,
-          message: "cannot create namespace",
-        },
-      };
-    });
-    return c.json(res);
-  })
-  .delete("/delete", async (c) => {
-    const deleted = await deleteUser(c).then(async (r) => {
-      if (r.ok) {
-        if ((await deleteNamespace(c)).ok) {
-          return r;
-        } else {
-          // error: cannot delete namespace
-          return {
+  .post(
+    "/verify",
+    validator("json", (value: { id: string; code: string }, c) => {
+      if (
+        !value["id"] ||
+        !value["code"] ||
+        typeof value["id"] !== "string" ||
+        typeof value["code"] !== "string"
+      ) {
+        return c.json(
+          {
             ok: false,
             body: {
-              code: 500,
-              message: "cannot delete namespace",
+              code: 401,
+              message: "Invalid request body",
             },
-          };
-        }
+          },
+          401,
+        );
       }
-      return r;
-    });
-    return c.json(deleted);
-  });
+      return value;
+    }),
+    async (c) => {
+      const { id, code } = await c.req.json<{ id: string; code: string }>();
+      const res = await verifyUser(c, { id, code }).then(async (r) => {
+        if (r.ok) {
+          c.req.raw.headers.set("Authorization", `Bearer ${r.token}`);
+          const created = await createNamespace(c);
+          if (created.ok) {
+            return r;
+          }
+        }
+        const err: ApiErrorResponse = {
+          ok: false,
+          body: {
+            code: 500,
+            message: "cannot create namespace",
+          },
+        };
+        return err;
+      });
+      return c.json(res);
+    },
+  )
+  .delete(
+    "/delete",
+    validator("header", (value, c) => {
+      const authorization = c.req.raw.headers.get("Authorization");
+      if (authorization === null) {
+        return c.text("no authorization in header");
+      }
+      return value;
+    }),
+    async (c) => {
+      const deleted = await deleteUser(c).then(async (r) => {
+        if (r.ok) {
+          if ((await deleteNamespace(c)).ok) {
+            return r;
+          } else {
+            // error: cannot delete namespace
+            const err: ApiErrorResponse = {
+              ok: false,
+              body: {
+                code: 500,
+                message: "cannot delete namespace",
+              },
+            };
+            return err;
+          }
+        }
+        return r;
+      });
+      return c.json(deleted);
+    },
+  );
 
 export default user;

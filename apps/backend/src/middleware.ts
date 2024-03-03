@@ -2,6 +2,7 @@ import { type Context } from "hono";
 import { env } from "./env";
 import { getToken } from "./utils";
 import { createRemoteJWKSet, jwtVerify } from "jose";
+import type { ApiErrorResponse } from "./type";
 
 export const verifyTokenMiddleware = async (c: Context, next: Function) => {
   const token = getToken(c);
@@ -21,7 +22,15 @@ export const verifyTokenMiddleware = async (c: Context, next: Function) => {
     .catch((_) => false);
   if (!ok) {
     console.log("authenticate jwt is failed");
-    throw new Response("Token is invalid", { status: 401 });
+    //throw new Response("Token is invalid", { status: 401 });
+    const err: ApiErrorResponse = {
+      ok: false,
+      body: {
+        code: 401,
+        message: "authenticate jwt is failed",
+      },
+    };
+    return c.json(err, 401);
   }
   await next();
 };

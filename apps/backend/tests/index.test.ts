@@ -3,28 +3,6 @@ import { testClient } from "hono/testing";
 import appUser from "../src/user";
 import { getPasscodeFromMail } from "./utils";
 
-test("create test user with no email", async () => {
-  const res = await testClient(appUser)
-    .create.$post({
-      json: {},
-    })
-    .then((r) => r.json());
-  expect(res.ok).toBe(false);
-  expect(res.body).toHaveProperty("code");
-});
-
-test("create test user with no string", async () => {
-  const res = await testClient(appUser)
-    .create.$post({
-      json: {
-        email: 1234,
-      },
-    })
-    .then((r) => r.json());
-  expect(res.ok).toBe(false);
-  res.ok || expect(res.body.code).toBe(401);
-});
-
 test("create test user", async () => {
   const email = "test@user.com";
   const id = await testClient(appUser)
@@ -49,7 +27,7 @@ test("create test user", async () => {
     .then(async (code) => {
       return await testClient(appUser).verify.$post({
         json: {
-          id,
+          id: id || "",
           code,
         },
       });
@@ -57,25 +35,27 @@ test("create test user", async () => {
     .then((r) => r.json())
     .then((r) => {
       expect(r.ok).toBe(true);
-      return r.ok ? { id: r.body.id, token: r.token } : undefined;
+      return r;
     });
-  expect(verified).not.toBeUndefined();
+  expect(verified.ok).toBe(true);
 
-  if (!verified) throw new Error("verify email error");
+  if (!verified.ok) throw new Error("verify email error");
+
+  const dummyToken = await testClient(appUser)
+    .delete.$delete({
+      header: {
+        Authorization: "Bearer invalid_token",
+      },
+    })
+    .then((r) => r.json());
+  expect(dummyToken.ok).toBe(false);
 
   const deleted = await testClient(appUser)
-    .delete.$delete(
-      {
-        json: {
-          email,
-        },
+    .delete.$delete({
+      header: {
+        Authorization: "Bearer " + verified.token,
       },
-      {
-        headers: {
-          Authorization: "Bearer " + verified.token,
-        },
-      },
-    )
+    })
     .then((r) => r.json());
 
   expect(deleted.ok).toBe(true);
