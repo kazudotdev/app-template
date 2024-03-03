@@ -3,8 +3,8 @@ import { env } from "./env";
 import { http } from "./http";
 import { getUserIdFromToken } from "./utils";
 import type { ApiErrorResponse } from "./type";
-const user = new Hono();
-const admin = new Hono();
+const appDB = new Hono();
+const adminDB = new Hono();
 
 export const createNamespace = async (c: Context) => {
   const { ok, userId } = getUserIdFromToken(c);
@@ -48,7 +48,7 @@ export const deleteNamespace = async (c: Context) => {
   });
 };
 
-admin.on(
+adminDB.on(
   ["POST", "DELETE"],
   "/v1/namespaces/:namespace/:operation?",
   async (c) => {
@@ -79,7 +79,7 @@ admin.on(
   },
 );
 
-user.on(["POST"], "/:namespace/*", async (c) => {
+appDB.on(["POST"], "/:namespace/*", async (c) => {
   const { namespace } = c.req.param();
   c.req.path;
   const path = c.req.path.split(`/${namespace}/`)[1] ?? "";
@@ -98,4 +98,8 @@ user.on(["POST"], "/:namespace/*", async (c) => {
   return fetch(req).catch((e) => c.json({ error: e }));
 });
 
-export { admin, user };
+const db = {
+  user: appDB,
+};
+
+export default db;

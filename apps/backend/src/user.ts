@@ -1,6 +1,7 @@
 import { Hono, type Context } from "hono";
 import { env } from "./env";
 import { http } from "./http";
+import { createNamespace, deleteNamespace } from "./db";
 import { verifyTokenMiddleware } from "./middleware";
 import type {
   UserFindByEmailResult,
@@ -62,7 +63,7 @@ export const deleteUser = async (c: Context) => {
 };
 
 // Endpoint
-const appUser = new Hono()
+const user = new Hono()
   .use("/delete", verifyTokenMiddleware)
   .post("/create", async (c) => {
     const { email } = await c.req.json<{ email: string }>();
@@ -70,10 +71,43 @@ const appUser = new Hono()
   })
   .post("/verify", async (c) => {
     const { id, code } = await c.req.json<{ id: string; code: string }>();
-    return c.json(await verifyUser(c, { id, code }));
+    const res = await verifyUser(c, { id, code }).then(async (r) => {
+      if (r.ok) {
+        c.req.raw.headers.set("Authorization", `Bearer ${r.token}`);
+        const created = await createNamespace(c);
+        if (created.ok) {
+          return r;
+        }
+      }
+      return {
+        ok: false,
+        body: {
+          code: 500,
+          message: "cannot create namespace",
+        },
+      };
+    });
+    return c.json(res);
   })
   .delete("/delete", async (c) => {
-    return c.json(await deleteUser(c));
+    const deleted = await deleteUser(c).then(async (r) => {
+      if (r.ok) {
+        if ((await deleteNamespace(c)).ok) {
+          return r;
+        } else {
+          // error: cannot delete namespace
+          return {
+            ok: false,
+            body: {
+              code: 500,
+              message: "cannot delete namespace",
+            },
+          };
+        }
+      }
+      return r;
+    });
+    return c.json(deleted);
   });
 
-export default appUser;
+export default user;
