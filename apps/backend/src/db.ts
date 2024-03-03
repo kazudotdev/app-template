@@ -1,19 +1,58 @@
 import { Hono, type Context } from "hono";
 import { env } from "./env";
 import { http } from "./http";
-import { getToken } from "./utils";
+import { getUserIdFromToken } from "./utils";
+import type { ApiErrorResponse } from "./type";
 const user = new Hono();
 const admin = new Hono();
 
-const createNamespace = (c: Context, { userId }: { userId: string }) => {
-  const token = getToken(c);
-  return http.post(`/v1/namespace/${userId}/create`, { body: {} });
+export const createNamespace = async (c: Context) => {
+  const { ok, userId } = getUserIdFromToken(c);
+  if (!ok) {
+    const err: ApiErrorResponse = {
+      ok: false,
+      body: {
+        code: 500,
+        message: "Invalid token",
+      },
+    };
+    return err;
+  }
+  const headers = c.req.raw.headers;
+  headers.set("Content-Type", "application-json");
+  return http.post<unknown>(
+    `${env(c).LIBSQL_ADMIN_URL}/v1/namespaces/${userId}/create`,
+    {
+      body: {},
+      //@ts-ignore
+      headers,
+    },
+  );
+};
+
+export const deleteNamespace = async (c: Context) => {
+  const { ok, userId } = getUserIdFromToken(c);
+  if (!ok) {
+    const err: ApiErrorResponse = {
+      ok: false,
+      body: {
+        code: 500,
+        message: "Invalid token",
+      },
+    };
+    return err;
+  }
+  return http.delete(`${env(c).LIBSQL_ADMIN_URL}/v1/namespaces/${userId}`, {
+    //@ts-ignore
+    headers: c.req.raw.headers,
+  });
 };
 
 admin.on(
   ["POST", "DELETE"],
   "/v1/namespaces/:namespace/:operation?",
   async (c) => {
+    console.log("call admin api");
     const { namespace, operation } = c.req.param();
     if (operation && operation === "create" && c.req.raw.method === "DELETE") {
       throw new Error("no supported");
@@ -31,7 +70,12 @@ admin.on(
     });
     req.headers.set("host", url.host);
     req.headers.set("content-type", "application/json");
-    return fetch(req).catch((e) => c.json({ error: e }));
+    return fetch(req)
+      .catch((e) => c.json({ error: e }))
+      .then(async (r) => {
+        console.log(await r.json());
+        return r;
+      });
   },
 );
 

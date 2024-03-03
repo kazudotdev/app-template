@@ -23,7 +23,7 @@ const fetcher = async <T>(
             message: r.statusText,
           },
         };
-        console.error("Error in fetcher: " + r.statusText);
+        console.error("Error in fetcher: " + r.statusText + ": " + url);
         return err;
       }
       const ok: ApiSuccessResponse<T> = {
