@@ -1,4 +1,5 @@
 import { Hono, type Context } from "hono";
+import { validator } from "hono/validator";
 import { env } from "./env";
 import { http } from "./http";
 import { createNamespace, deleteNamespace } from "./db";
@@ -65,10 +66,24 @@ export const deleteUser = async (c: Context) => {
 // Endpoint
 const user = new Hono()
   .use("/delete", verifyTokenMiddleware)
-  .post("/create", async (c) => {
-    const { email } = await c.req.json<{ email: string }>();
-    return c.json(await createUser(c, { email }));
-  })
+  .post(
+    "/create",
+    validator("json", (value: { email: string }, c) => {
+      if (!value["email"] || typeof value["email"] !== "string")
+        return c.json({
+          ok: false,
+          body: {
+            code: 401,
+            message: "Invalid request body",
+          },
+        });
+      return value;
+    }),
+    async (c) => {
+      const { email } = await c.req.json<{ email: string }>();
+      return c.json(await createUser(c, { email }));
+    },
+  )
   .post("/verify", async (c) => {
     const { id, code } = await c.req.json<{ id: string; code: string }>();
     const res = await verifyUser(c, { id, code }).then(async (r) => {

@@ -3,6 +3,28 @@ import { testClient } from "hono/testing";
 import appUser from "../src/user";
 import { getPasscodeFromMail } from "./utils";
 
+test("create test user with no email", async () => {
+  const res = await testClient(appUser)
+    .create.$post({
+      json: {},
+    })
+    .then((r) => r.json());
+  expect(res.ok).toBe(false);
+  expect(res.body).toHaveProperty("code");
+});
+
+test("create test user with no string", async () => {
+  const res = await testClient(appUser)
+    .create.$post({
+      json: {
+        email: 1234,
+      },
+    })
+    .then((r) => r.json());
+  expect(res.ok).toBe(false);
+  res.ok || expect(res.body.code).toBe(401);
+});
+
 test("create test user", async () => {
   const email = "test@user.com";
   const id = await testClient(appUser)

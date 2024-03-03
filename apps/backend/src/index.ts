@@ -16,3 +16,5 @@ app.route("/user", user);
 app.route("/", passkeys);
 
 export default app;
+
+export type UserAppType = typeof user;
