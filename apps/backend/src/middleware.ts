@@ -1,5 +1,4 @@
 import { type Context } from "hono";
-import { getCookie } from "hono/cookie";
 import { env } from "./env";
 import { getToken } from "./utils";
 import { createRemoteJWKSet, jwtVerify } from "jose";
