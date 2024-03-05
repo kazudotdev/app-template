@@ -1,19 +1,23 @@
 import { test, expect } from "bun:test";
 import { createDatabase, migrate } from "./index";
-import { notes } from "../schema";
 import { sql } from "drizzle-orm";
-
+import { users } from "../schema/remote";
 //const db = createDatabase("http://localhost:8000/dev/testdb/");
-const db = createDatabase("http://localhost:3000/db/testdb/");
+const db = createDatabase(":memory:");
 
 test("migration test", async () => {
   await migrate(db);
   const result = await db.run(sql`SELECT * from __drizzle_migrations`);
   expect(result.columns.length).toBeGreaterThan(0);
+  console.log({ rows: result.toJSON() });
+});
 
-  await db.insert(notes).values({ title: "test", content: "hogehoge" });
-  const _notes = await db.select().from(notes);
-  expect(_notes.length).toBeGreaterThan(0);
-  expect(_notes[0].title).toBe("test");
-  expect(_notes[0].content).toBe("hogehoge");
+test("insert dummy user data", async () => {
+  const result = await db
+    .insert(users)
+    .values({ id: "test-user-id", email: "test@user.com" })
+    .returning();
+  expect(result.length).toBe(1);
+  expect(result[0].id).toBe("test-user-id");
+  expect(result[0].email).toBe("test@user.com");
 });

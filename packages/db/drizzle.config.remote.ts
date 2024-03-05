@@ -1,9 +1,9 @@
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-  schema: "./schema.ts",
+  schema: "./schema/remote.ts",
   verbose: true,
   driver: "expo",
-  out: "./drizzle",
+  out: "./drizzle/remote",
   strict: true,
 });

@@ -1,7 +1,7 @@
 import { drizzle, type LibSQLDatabase } from "drizzle-orm/libsql";
 import { MigrationMeta } from "drizzle-orm/migrator";
 import { createClient } from "@libsql/client";
-import config from "../migrations";
+import config from "../migrations_remote";
 import { sql } from "drizzle-orm";
 
 interface MigrationJournal {

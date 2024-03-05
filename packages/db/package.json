@@ -3,11 +3,14 @@
   "name": "@db",
   "version": "1.0.0",
   "scripts": {
-    "generate": "bunx drizzle-kit generate:sqlite && bun run build",
-    "build": "bun build ./drizzle/migrations.js --outfile ./migrations.js",
+    "generate": "bun run generate:local && bun run generate:remote",
+    "generate:local": "bunx drizzle-kit generate:sqlite --config ./drizzle.config.local.ts && bun run build:local",
+    "build:local": "bun build ./drizzle/local/migrations.js --outfile ./migrations_local.js",
+    "generate:remote": "bunx drizzle-kit generate:sqlite --config ./drizzle.config.remote.ts && bun run build:remote",
+    "build:remote": "bun build ./drizzle/remote/migrations.js --outfile ./migrations_remote.js",
     "migrate": "bun run migration.ts"
   },
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "drizzle-kit": "0.20.13"
   },

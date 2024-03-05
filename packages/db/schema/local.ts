@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createId } from "@paralleldrive/cuid2";
+import { commonColumns } from "./common";
 
 export const notes = sqliteTable("notes", {
   id: text("id")
@@ -9,9 +10,9 @@ export const notes = sqliteTable("notes", {
     .notNull(),
   title: text("title"),
   content: text("content"),
-  created_at: text("timestamp").default(sql`CURRENT_TIMESTAMP`),
   owner: text("owner").default("user"),
   public: integer("private", { mode: "boolean" }).default(false),
+  ...commonColumns,
 });
 
 export type NewNotes = typeof notes.$inferInsert;
