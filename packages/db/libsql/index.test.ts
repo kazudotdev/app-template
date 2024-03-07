@@ -3,7 +3,7 @@ import { createDatabase, migrate } from "./index";
 import { sql } from "drizzle-orm";
 import { users } from "../schema/remote";
 //const db = createDatabase("http://localhost:8000/dev/testdb/");
-const db = createDatabase(":memory:");
+const db = createDatabase(":memory:", { logger: true });
 
 test("migration test", async () => {
   await migrate(db);

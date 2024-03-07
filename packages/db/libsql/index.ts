@@ -21,11 +21,11 @@ interface MigrationConfig {
   migrations: Record<string, string>;
 }
 
-export function createDatabase(url: string) {
+export function createDatabase(url: string, options?: { logger: boolean }) {
   const client = createClient({
     url,
   });
-  return drizzle(client, {logger: true});
+  return drizzle(client, options);
 }
 
 //async function sha256(input: string) {
