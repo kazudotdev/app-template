@@ -1,9 +1,9 @@
 import { test, expect } from "bun:test";
-import { createDatabase, migrate } from "./index";
+import { createDatabase, migrate } from "../libsql";
 import { sql } from "drizzle-orm";
 import { users } from "../schema/remote";
 //const db = createDatabase("http://localhost:8000/dev/testdb/");
-const db = createDatabase(":memory:", { logger: true });
+const db = createDatabase(":memory:", { logger: false });
 
 test("migration test", async () => {
   await migrate(db);
