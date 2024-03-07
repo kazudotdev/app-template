@@ -48,37 +48,6 @@ export const deleteNamespace = async (c: Context) => {
   });
 };
 
-//adminDB.on(
-//  ["POST", "DELETE"],
-//  "/v1/namespaces/:namespace/:operation?",
-//  async (c) => {
-//    console.log("call admin api");
-//    const { namespace, operation } = c.req.param();
-//    if (operation && operation === "create" && c.req.raw.method === "DELETE") {
-//      throw new Error("no supported");
-//    }
-//    const url = new URL(
-//      `${env(c).LIBSQL_ADMIN_URL}/v1/namespaces/${namespace}/${
-//        operation ?? ""
-//      }`.replace(/(.+)\/$/, "$1"),
-//    );
-//    const req = new Request(url, {
-//      headers: c.req.raw.headers,
-//      method: c.req.raw.method,
-//      mode: c.req.raw.mode,
-//      body: "{}",
-//    });
-//    req.headers.set("host", url.host);
-//    req.headers.set("content-type", "application/json");
-//    return fetch(req)
-//      .catch((e) => c.json({ error: e }))
-//      .then(async (r) => {
-//        console.log(await r.json());
-//        return r;
-//      });
-//  },
-//);
-
 user.on(["POST"], "/:namespace/*", async (c) => {
   const { namespace } = c.req.param();
   c.req.path;

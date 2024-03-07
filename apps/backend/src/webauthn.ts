@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { env } from "./env";
-const app = new Hono().basePath("/passkeys");
+const webauthn = new Hono();
 
-app.get("/.well-known/jwks.json", async (c) => {
+webauthn.get("/.well-known/jwks.json", async (c) => {
   const url = env(c).PASSKEYS_URL;
   return fetch(`${url}/.well-known/jwks.json`)
     .then(async (r) => {
@@ -12,8 +12,8 @@ app.get("/.well-known/jwks.json", async (c) => {
     .catch((_) => c.json({ error: "cannot get jwks.json" }, 500));
 });
 
-app.all("/*", async (c) => {
-  const url = new URL(env(c).PASSKEYS_URL + c.req.path.split("/passkeys")[1]);
+webauthn.all("/*", async (c) => {
+  const url = new URL(env(c).PASSKEYS_URL + c.req.path.split("/webauthn")[1]);
   const body =
     c.req.raw.body == null ? undefined : JSON.stringify(await c.req.json());
   const req = new Request(url, {
@@ -25,4 +25,4 @@ app.all("/*", async (c) => {
   return fetch(req);
 });
 
-export { app as passkeys };
+export default webauthn;

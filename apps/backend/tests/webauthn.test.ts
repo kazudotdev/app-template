@@ -19,7 +19,7 @@ const deleteAllUsers = async () => {
   }
 };
 
-const baseUrl = "http://localhost:3000/passkeys";
+const baseUrl = "http://localhost:3000/webauthn";
 describe("register and verify email by passcode", async () => {
   await deleteAllMails();
   await deleteAllUsers();

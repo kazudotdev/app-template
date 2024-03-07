@@ -11,7 +11,6 @@ import type {
   UserDeleteResult,
   ApiErrorResponse,
 } from "./type";
-import { which } from "bun";
 
 export const createUser = async (c: Context, { email }: { email: string }) => {
   return http
