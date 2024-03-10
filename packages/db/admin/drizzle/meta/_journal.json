@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1710054548630,
+      "tag": "0000_luxuriant_roland_deschain",
+      "breakpoints": true
+    }
+  ]
+}
